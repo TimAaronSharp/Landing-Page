@@ -1,15 +1,15 @@
 
 var Create = function () {
-    // this.sky
-    // this.star
-    // this.diamond
-    this.gameData = {}
     this.platforms
     this.cursors
     this.buttonJump
     this.buttonDown
     this.buttonLeft
     this.buttonRight
+    this.buttonLeftMobile
+    this.buttonRightMobile
+    this.moveLeft = false
+    this.moveRight = false
 
 }
 
@@ -85,13 +85,17 @@ Create.prototype = {
         //Sets the players initial x velocity. If this isn't set then the player will not stop after you let go of the movement keys.
         player.body.velocity.x = 0;
 
-        if (cursors.left.isDown || buttonLeft.isDown) {
+
+        // console.log(`Left: ${this.moveLeft} Right: ${this.moveRight}`)
+
+
+        if (this.moveLeft) {
             //  Move to the left
             player.body.velocity.x = -300;
 
             player.animations.play('left');
         }
-        else if (cursors.right.isDown || buttonRight.isDown) {
+        else if (this.moveRight) {
             //  Move to the right
             player.body.velocity.x = 300;
 
@@ -103,32 +107,60 @@ Create.prototype = {
 
             player.frame = 4;
         }
+        // console.log(`moveLeft: ${this.moveLeft}`)
 
         //  Allow the player to jump if they are touching the ground.
-        buttonJump.events.onInputOver.add(function () { player.body.velocity.y = -400; })
+        this.buttonJump.events.onInputDown.add(function () { if (player.body.touching.down && hitPlatform) { player.body.velocity.y = -400; } })
+
+        this.buttonLeftMobile.events.onInputDown.add(function () {
+            this.moveLeft = true
+            if (this.moveLeft) {
+                player.body.velocity.x = -300;
+            }
+        })
+        this.buttonLeftMobile.events.onInputUp.add(function () { this.moveLeft = false })
+        this.buttonRightMobile.events.onInputDown.add(function () {
+            this.moveRight = true
+            if (this.moveRight) {
+                player.body.velocity.x = 300;
+            }
+        })
+        this.buttonRightMobile.events.onInputUp.add(function () { this.moveRight = false })
         // game.physics.arcade.collide(stars, platforms);
 
     },
     buttonCreator() {
         //Creates keyboard game controls. game.input.keyboard.createCursorKeys() is a method that sets the arrow keys for movement.
         cursors = game.input.keyboard.createCursorKeys();
+
         // buttonJump = game.input.keyboard.addKey(Phaser.Keyboard.W)
-        buttonDown = game.input.keyboard.addKey(Phaser.Keyboard.S)
-        buttonLeft = game.input.keyboard.addKey(Phaser.Keyboard.A)
-        buttonRight = game.input.keyboard.addKey(Phaser.Keyboard.D)
+        this.buttonDown = game.input.keyboard.addKey(Phaser.Keyboard.S)
+        this.buttonLeft = game.input.keyboard.addKey(Phaser.Keyboard.A)
+        this.buttonRight = game.input.keyboard.addKey(Phaser.Keyboard.D)
 
         //Creates touch controls for mobile devices.(x, y, key, callback, callbackContext, overFrame, outFrame, downFrame, upFrame)
-        buttonJump = game.add.button(600, 500, 'test-button', null, this, 0, 1, 0, 1)
-        //Fixes the button to the screen
-        buttonJump.fixedToCamera = true
-        // buttonJump.events.onInputOver.add(function(){})
+        this.buttonJump = game.add.button(600, 500, 'test-button', null, this, 0, 1, 0, 1)
+        this.buttonLeftMobile = game.add.button(16, 500, 'test-button', null, this, 0, 1, 0, 1)
+        this.buttonRightMobile = game.add.button(96, 500, 'test-button', null, this, 0, 1, 0, 1)
 
+        this.buttonLeftMobile.events.onInputOver.add(function () { this.moveLeft = true })
+        this.buttonLeftMobile.events.onInputOut.add(function () { this.moveLeft = false })
+        this.buttonRightMobile.events.onInputOver.add(function () { this.moveRight = true })
+        this.buttonRightMobile.events.onInputOut.add(function () { this.moveRight = false })
 
+        this.buttonLeftMobile.events.onInputDown.add(function () { this.moveLeft = true })
+        this.buttonLeftMobile.events.onInputUp.add(function () { this.moveLeft = false })
+
+        this.buttonLeftMobile.events.onInputDown.add(function () { console.log(this.moveLeft) })
+        this.buttonLeftMobile.events.onInputUp.add(function () { console.log(this.moveLeft) })
+
+        // this.buttonRightMobile.events.onInputDown.add(function () { console.log(this.moveRight) })
+        // this.buttonRightMobile.events.onInputUp.add(function () { console.log(this.moveRight) })
+
+        //Fixes the buttons to the screen
+        this.buttonJump.fixedToCamera = true
+        this.buttonLeftMobile.fixedToCamera = true
+        this.buttonRightMobile.fixedToCamera = true
     },
-    jumping() {
-        // if (cursors.up.isDown && player.body.touching.down && hitPlatform || buttonJump.events.onInputOver && player.body.touching.down && hitPlatform) {
-        player.body.velocity.y = -400;
-        // }
-
-    }
+    gofull() { game.scale.startFullScreen(false); }
 }

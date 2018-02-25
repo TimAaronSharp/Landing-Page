@@ -16,6 +16,9 @@ Preload.prototype = {
 
         this.game.load.spritesheet('dude', './assets/dude.png', 32, 48)
 
+        this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
+
         //adding keys to the payload for the "Create" state to reference when creating assets
         // this.payload.sky = 'sky'
         // this.payload.star = 'star'
