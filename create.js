@@ -105,12 +105,10 @@ Create.prototype = {
         }
 
         //  Allow the player to jump if they are touching the ground.
-        if (cursors.up.isDown && player.body.touching.down && hitPlatform) {
+        if (cursors.up.isDown && player.body.touching.down && hitPlatform || buttonJump.events.onInputOver && player.body.touching.down && hitPlatform) {
             player.body.velocity.y = -400;
         }
-        if (buttonJump.events.onInputDown && player.body.touching.down && hitPlatform){
-            console.log("yo dawg")
-        }
+        if ()
         // game.physics.arcade.collide(stars, platforms);
 
     },
