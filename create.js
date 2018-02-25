@@ -6,20 +6,15 @@ var Create = function () {
     this.gameData = {}
     this.platforms
     this.cursors
-    this.upKey
-    this.downKey
-    this.leftKey
-    this.rightKey
+    this.buttonJump
+    this.buttonDown
+    this.buttonLeft
+    this.buttonRight
 
 }
 
 Create.prototype = {
-    init: function (payload) {
-        //payload is what was passed down from the "Preload" state. Assigning payload data to local variables for use in the create function.
-        // this.sky = payload.sky
-        // this.star = payload.star
-        // this.diamond = payload.diamond
-        // this.dude = payload.dude
+    init: function () {
 
     },
     create: function () {
@@ -75,13 +70,10 @@ Create.prototype = {
         player.animations.add('left', [0, 1, 2, 3], 10, true);
         player.animations.add('right', [5, 6, 7, 8], 10, true);
 
-        //Creates game controls. game.input.keyboard.createCursorKeys() is a method that sets the arrow keys for movement.
-        cursors = game.input.keyboard.createCursorKeys();
-        upKey = game.input.keyboard.addKey(Phaser.Keyboard.W)
-        downKey = game.input.keyboard.addKey(Phaser.Keyboard.S)
-        leftKey = game.input.keyboard.addKey(Phaser.Keyboard.A)
-        rightKey = game.input.keyboard.addKey(Phaser.Keyboard.D)
+        player.inputEnabled = true
 
+
+        this.buttonCreator();
     },
     update: function () {
         //Sets the camera to follow the player
@@ -93,13 +85,13 @@ Create.prototype = {
         //Sets the players initial x velocity. If this isn't set then the player will not stop after you let go of the movement keys.
         player.body.velocity.x = 0;
 
-        if (cursors.left.isDown || leftKey.isDown) {
+        if (cursors.left.isDown || buttonLeft.isDown) {
             //  Move to the left
             player.body.velocity.x = -300;
 
             player.animations.play('left');
         }
-        else if (cursors.right.isDown || rightKey.isDown) {
+        else if (cursors.right.isDown || buttonRight.isDown) {
             //  Move to the right
             player.body.velocity.x = 300;
 
@@ -113,10 +105,29 @@ Create.prototype = {
         }
 
         //  Allow the player to jump if they are touching the ground.
-        if (cursors.up.isDown && player.body.touching.down && hitPlatform || upKey.isDown && player.body.touching.down && hitPlatform) {
+        if (cursors.up.isDown && player.body.touching.down && hitPlatform) {
             player.body.velocity.y = -400;
         }
+        if (buttonJump.events.onInputDown && player.body.touching.down && hitPlatform){
+            console.log("yo dawg")
+        }
         // game.physics.arcade.collide(stars, platforms);
+
+    },
+    buttonCreator() {
+        //Creates keyboard game controls. game.input.keyboard.createCursorKeys() is a method that sets the arrow keys for movement.
+        cursors = game.input.keyboard.createCursorKeys();
+        // buttonJump = game.input.keyboard.addKey(Phaser.Keyboard.W)
+        buttonDown = game.input.keyboard.addKey(Phaser.Keyboard.S)
+        buttonLeft = game.input.keyboard.addKey(Phaser.Keyboard.A)
+        buttonRight = game.input.keyboard.addKey(Phaser.Keyboard.D)
+
+        //Creates touch controls for mobile devices.(x, y, key, callback, callbackContext, overFrame, outFrame, downFrame, upFrame)
+        buttonJump = game.add.button(600, 500, 'test-button', null, this, 0, 1, 0, 1)
+        //Fixes the button to the screen
+        buttonJump.fixedToCamera = true
+        // buttonJump.events.onInputOver.add(function(){})
+
 
     }
 }
