@@ -105,9 +105,7 @@ Create.prototype = {
         }
 
         //  Allow the player to jump if they are touching the ground.
-        if (cursors.up.isDown && player.body.touching.down && hitPlatform || buttonJump.events.onInputOver && player.body.touching.down && hitPlatform) {
-            player.body.velocity.y = -400;
-        }
+        buttonJump.events.onInputOver.add(function () { player.body.velocity.y = -400; })
         // game.physics.arcade.collide(stars, platforms);
 
     },
@@ -125,6 +123,12 @@ Create.prototype = {
         buttonJump.fixedToCamera = true
         // buttonJump.events.onInputOver.add(function(){})
 
+
+    },
+    jumping() {
+        // if (cursors.up.isDown && player.body.touching.down && hitPlatform || buttonJump.events.onInputOver && player.body.touching.down && hitPlatform) {
+        player.body.velocity.y = -400;
+        // }
 
     }
 }
