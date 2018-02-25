@@ -108,7 +108,6 @@ Create.prototype = {
         if (cursors.up.isDown && player.body.touching.down && hitPlatform || buttonJump.events.onInputOver && player.body.touching.down && hitPlatform) {
             player.body.velocity.y = -400;
         }
-        if ()
         // game.physics.arcade.collide(stars, platforms);
 
     },
