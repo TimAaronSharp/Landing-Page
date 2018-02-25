@@ -89,24 +89,24 @@ Create.prototype = {
         // console.log(`Left: ${this.moveLeft} Right: ${this.moveRight}`)
 
 
-        if (this.moveLeft) {
-            //  Move to the left
-            player.body.velocity.x = -300;
+        // if (this.moveLeft) {
+        //     //  Move to the left
+        //     player.body.velocity.x = -300;
 
-            player.animations.play('left');
-        }
-        else if (this.moveRight) {
-            //  Move to the right
-            player.body.velocity.x = 300;
+        //     player.animations.play('left');
+        // }
+        // else if (this.moveRight) {
+        //     //  Move to the right
+        //     player.body.velocity.x = 300;
 
-            player.animations.play('right');
-        }
-        else {
-            //  Stand still
-            player.animations.stop();
+        //     player.animations.play('right');
+        // }
+        // else {
+        //     //  Stand still
+        //     player.animations.stop();
 
-            player.frame = 4;
-        }
+        //     player.frame = 4;
+        // }
         // console.log(`moveLeft: ${this.moveLeft}`)
 
         //  Allow the player to jump if they are touching the ground.
@@ -114,18 +114,29 @@ Create.prototype = {
 
         this.buttonLeftMobile.events.onInputDown.add(function () {
             this.moveLeft = true
-            if (this.moveLeft) {
-                player.body.velocity.x = -300;
-            }
         })
-        this.buttonLeftMobile.events.onInputUp.add(function () { this.moveLeft = false })
+        this.buttonLeftMobile.events.onInputUp.add(function () {
+            this.moveLeft = false
+        })
         this.buttonRightMobile.events.onInputDown.add(function () {
             this.moveRight = true
-            if (this.moveRight) {
-                player.body.velocity.x = 300;
-            }
         })
-        this.buttonRightMobile.events.onInputUp.add(function () { this.moveRight = false })
+        this.buttonRightMobile.events.onInputUp.add(function () {
+            this.moveRight = false
+        })
+        if (this.moveLeft) {
+            player.body.velocity.x = -300;
+            player.animations.play('left');
+        }
+        else if (this.moveRight) {
+            player.body.velocity.x = 300;
+            player.animations.play('right');
+        }
+        else {
+            player.animations.stop();
+
+            player.frame = 4;
+        }
         // game.physics.arcade.collide(stars, platforms);
 
     },
@@ -140,8 +151,8 @@ Create.prototype = {
 
         //Creates touch controls for mobile devices.(x, y, key, callback, callbackContext, overFrame, outFrame, downFrame, upFrame)
         this.buttonJump = game.add.button(600, 500, 'test-button', null, this, 0, 1, 0, 1)
-        this.buttonLeftMobile = game.add.button(16, 500, 'test-button', null, this, 0, 1, 0, 1)
-        this.buttonRightMobile = game.add.button(96, 500, 'test-button', null, this, 0, 1, 0, 1)
+        this.buttonLeftMobile = game.add.button(16, 350, 'test-button', null, this, 0, 1, 0, 1)
+        this.buttonRightMobile = game.add.button(96, 350, 'test-button', null, this, 0, 1, 0, 1)
 
         this.buttonLeftMobile.events.onInputOver.add(function () { this.moveLeft = true })
         this.buttonLeftMobile.events.onInputOut.add(function () { this.moveLeft = false })
