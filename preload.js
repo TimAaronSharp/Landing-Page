@@ -30,7 +30,7 @@ Preload.prototype = {
     //create function used here only to prevent "Create" state from starting before all assets are preloaded. If it is in the preload function it sometimes starts before assets are loaded.
     create: function () {
         //starting the "Create" state after assets are preloaded. (key, clear world, clear cache, data to pass down to "Create" state)
-        game.state.start('Create', true, false)
+        game.state.start('Game', true, false)
         //test?
 
     }
