@@ -2,14 +2,7 @@
 var Create = function () {
     this.platforms
     this.cursors
-    this.buttonJump
-    this.buttonDown
-    this.buttonLeft
-    this.buttonRight
-    this.buttonLeftMobile
-    this.buttonRightMobile
-    this.moveLeft = false
-    this.moveRight = false
+    // this.hitPlatform
 
 }
 
@@ -72,8 +65,8 @@ Create.prototype = {
 
         player.inputEnabled = true
 
-
         this.buttonCreator();
+        this.setControls();
     },
     update: function () {
         //Sets the camera to follow the player
@@ -85,93 +78,51 @@ Create.prototype = {
         //Sets the players initial x velocity. If this isn't set then the player will not stop after you let go of the movement keys.
         player.body.velocity.x = 0;
 
-
-        // console.log(`Left: ${this.moveLeft} Right: ${this.moveRight}`)
-
-
-        // if (this.moveLeft) {
-        //     //  Move to the left
-        //     player.body.velocity.x = -300;
-
-        //     player.animations.play('left');
-        // }
-        // else if (this.moveRight) {
-        //     //  Move to the right
-        //     player.body.velocity.x = 300;
-
-        //     player.animations.play('right');
-        // }
-        // else {
-        //     //  Stand still
-        //     player.animations.stop();
-
-        //     player.frame = 4;
-        // }
-        // console.log(`moveLeft: ${this.moveLeft}`)
-
-        //  Allow the player to jump if they are touching the ground.
-        this.buttonJump.events.onInputDown.add(function () { if (player.body.touching.down && hitPlatform) { player.body.velocity.y = -400; } })
-
-        this.buttonLeftMobile.events.onInputDown.add(function () {
-            this.moveLeft = true
-        })
-        this.buttonLeftMobile.events.onInputUp.add(function () {
-            this.moveLeft = false
-        })
-        this.buttonRightMobile.events.onInputDown.add(function () {
-            this.moveRight = true
-        })
-        this.buttonRightMobile.events.onInputUp.add(function () {
-            this.moveRight = false
-        })
-        if (this.moveLeft) {
+        if (buttonLeftMobile.onInputDown) {
             player.body.velocity.x = -300;
             player.animations.play('left');
         }
-        else if (this.moveRight) {
+        else if (buttonRightMobile.onInputDown) {
             player.body.velocity.x = 300;
             player.animations.play('right');
         }
         else {
             player.animations.stop();
-
             player.frame = 4;
         }
-        // game.physics.arcade.collide(stars, platforms);
 
+        //  Allow the player to jump if they are touching the ground.
+        buttonJumpMobile.events.onInputDown.add(function () { if (player.body.touching.down && hitPlatform) { player.body.velocity.y = -400; } })
     },
     buttonCreator() {
         //Creates keyboard game controls. game.input.keyboard.createCursorKeys() is a method that sets the arrow keys for movement.
         cursors = game.input.keyboard.createCursorKeys();
 
-        // buttonJump = game.input.keyboard.addKey(Phaser.Keyboard.W)
-        this.buttonDown = game.input.keyboard.addKey(Phaser.Keyboard.S)
-        this.buttonLeft = game.input.keyboard.addKey(Phaser.Keyboard.A)
-        this.buttonRight = game.input.keyboard.addKey(Phaser.Keyboard.D)
+        buttonJump = game.input.keyboard.addKey(Phaser.Keyboard.W)
+        buttonDown = game.input.keyboard.addKey(Phaser.Keyboard.S)
+        buttonLeft = game.input.keyboard.addKey(Phaser.Keyboard.A)
+        buttonRight = game.input.keyboard.addKey(Phaser.Keyboard.D)
 
         //Creates touch controls for mobile devices.(x, y, key, callback, callbackContext, overFrame, outFrame, downFrame, upFrame)
-        this.buttonJump = game.add.button(600, 500, 'test-button', null, this, 0, 1, 0, 1)
-        this.buttonLeftMobile = game.add.button(16, 350, 'test-button', null, this, 0, 1, 0, 1)
-        this.buttonRightMobile = game.add.button(96, 350, 'test-button', null, this, 0, 1, 0, 1)
+        buttonJumpMobile = game.add.button(600, 500, 'test-button', null, this, 0, 1, 0, 1)
+        buttonLeftMobile = game.add.button(16, 350, 'test-button', null, this, 0, 1, 0, 1)
+        buttonRightMobile = game.add.button(96, 350, 'test-button', null, this, 0, 1, 0, 1)
 
-        this.buttonLeftMobile.events.onInputOver.add(function () { this.moveLeft = true })
-        this.buttonLeftMobile.events.onInputOut.add(function () { this.moveLeft = false })
-        this.buttonRightMobile.events.onInputOver.add(function () { this.moveRight = true })
-        this.buttonRightMobile.events.onInputOut.add(function () { this.moveRight = false })
-
-        this.buttonLeftMobile.events.onInputDown.add(function () { this.moveLeft = true })
-        this.buttonLeftMobile.events.onInputUp.add(function () { this.moveLeft = false })
-
-        this.buttonLeftMobile.events.onInputDown.add(function () { console.log(this.moveLeft) })
-        this.buttonLeftMobile.events.onInputUp.add(function () { console.log(this.moveLeft) })
-
-        // this.buttonRightMobile.events.onInputDown.add(function () { console.log(this.moveRight) })
-        // this.buttonRightMobile.events.onInputUp.add(function () { console.log(this.moveRight) })
+        //Sets the onInputDown properties to false when created. Seems to be set to true by default for some reason. Set to true so player doesn't move automatically.
+        buttonLeftMobile.onInputDown = false
+        buttonRightMobile.onInputDown = false
 
         //Fixes the buttons to the screen
-        this.buttonJump.fixedToCamera = true
-        this.buttonLeftMobile.fixedToCamera = true
-        this.buttonRightMobile.fixedToCamera = true
+        buttonJumpMobile.fixedToCamera = true
+        buttonLeftMobile.fixedToCamera = true
+        buttonRightMobile.fixedToCamera = true
+    },
+    setControls(){
+        buttonLeftMobile.events.onInputDown.add(function () { buttonLeftMobile.onInputDown = true })
+        buttonLeftMobile.events.onInputUp.add(function () {  buttonLeftMobile.onInputDown = false })
+        buttonRightMobile.events.onInputDown.add(function () { buttonRightMobile.onInputDown = true })
+        buttonRightMobile.events.onInputUp.add(function () {  buttonRightMobile.onInputDown = false })
+
     },
     gofull() { game.scale.startFullScreen(false); }
 }
