@@ -12,7 +12,8 @@ Create.prototype = {
     },
     create: function () {
         if (!game.device.desktop) {
-            game.input.onDown.add(gofull, this)
+            this.gofull()
+            // game.input.onDown.add(gofull, this)
         }
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -117,12 +118,15 @@ Create.prototype = {
         buttonLeftMobile.fixedToCamera = true
         buttonRightMobile.fixedToCamera = true
     },
-    setControls(){
+    setControls() {
         buttonLeftMobile.events.onInputDown.add(function () { buttonLeftMobile.onInputDown = true })
-        buttonLeftMobile.events.onInputUp.add(function () {  buttonLeftMobile.onInputDown = false })
+        buttonLeftMobile.events.onInputUp.add(function () { buttonLeftMobile.onInputDown = false })
         buttonRightMobile.events.onInputDown.add(function () { buttonRightMobile.onInputDown = true })
-        buttonRightMobile.events.onInputUp.add(function () {  buttonRightMobile.onInputDown = false })
+        buttonRightMobile.events.onInputUp.add(function () { buttonRightMobile.onInputDown = false })
 
     },
-    gofull() { game.scale.startFullScreen(false); }
+    gofull() {
+        game.scale.startFullScreen(true);
+        game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
+    }
 }
