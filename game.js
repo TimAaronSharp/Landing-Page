@@ -35,6 +35,7 @@ Game.prototype = {
         this.platforms = game.add.group()
         this.platforms.enableBody = true;
         game.physics.arcade.enable(this.platforms);
+        this.platforms.scale.setTo(this.scaleRatio, this.scaleRatio)
 
         //Creating an instance of the platforms group to be used as the ground of the world (x, y, key)
         var ground = this.platforms.create(0, game.world.height - 64, 'ground');
@@ -126,6 +127,12 @@ Game.prototype = {
         buttonJumpMobile.fixedToCamera = true
         buttonLeftMobile.fixedToCamera = true
         buttonRightMobile.fixedToCamera = true
+
+        //Scales buttons based on DPR (Device Pixel Ratio)
+        buttonFullScreen.scale.setTo(this.scaleRatio, this.scaleRatio)
+        buttonJumpMobile.scale.setTo(this.scaleRatio, this.scaleRatio)
+        buttonLeftMobile.scale.setTo(this.scaleRatio, this.scaleRatio)
+        buttonRightMobile.scale.setTo(this.scaleRatio, this.scaleRatio)
         this.setMobileControls()
         // }
     },
