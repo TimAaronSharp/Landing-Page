@@ -11,6 +11,7 @@ StartScreen.prototype = {
             game.scale.startFullScreen();
             game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
             game.state.start('Game', true, false)
+            
         })
     }
 }

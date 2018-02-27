@@ -2,6 +2,8 @@
 var Game = function () {
     this.platforms
     this.cursors
+    this.moveLeft = false
+    this.moveRight = false
     this.scaleRatio = window.devicePixelRatio / 3
 
 }
@@ -11,14 +13,14 @@ Game.prototype = {
 
     },
     create: function () {
-        this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-        this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        this.game.scale.refresh();
-        if (!game.device.desktop) {
-            game.scale.startFullScreen();
-            game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-            // game.input.onDown.add(gofull, this)
-        }
+        // this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+        // this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        // this.game.scale.refresh();
+        // if (!game.device.desktop) {
+        // }
+        // game.add.text(200, 200, window.devicePixelRatio, { font: '50px Ariel', fill: '#fff' })
+        console.log(`window.devicePixelRatio ${window.devicePixelRatio}`)
+        console.log(`scaleRatio ${this.scaleRatio}`)
         //Sets the size of the world to play in (topleft-most corner x, topleft-most corner y, width, height)
         game.world.setBounds(0, 0, 800, 600)
 
@@ -63,7 +65,7 @@ Game.prototype = {
         player = game.add.sprite(32, game.world.height - 150, "dude");
         // player.scale.set(configuration.scale_ratio);
         // player.scale.setTo(3, 3)
-        // player.scale.setTo(this.scaleRatio, this.scaleRatio)
+        player.scale.setTo(this.scaleRatio, this.scaleRatio)
 
         game.physics.arcade.enable(player);
         // player.body.bounce.y = 0.2;
@@ -80,7 +82,7 @@ Game.prototype = {
         player.inputEnabled = true
 
         this.buttonCreator();
-        this.setControls();
+        // this.setControls();
     },
     update: function () {
         //Sets the camera to follow the player
@@ -110,24 +112,22 @@ Game.prototype = {
     },
     buttonCreator() {
         //Creates keyboard game controls. game.input.keyboard.createCursorKeys() is a method that sets the arrow keys for movement.
-        cursors = game.input.keyboard.createCursorKeys();
         buttonFullScreen = game.add.button(0, 0, 'test-button', null, this, 0, 1, 0, 1)
         buttonFullScreen.events.onInputDown.add(function () {
-            game.scale.startFullScreen();
-            game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+            if (this.game.scale.isFullScreen) {
+                this.game.scale.stopFullScreen()
+            } else {
+                this.game.scale.startFullScreen();
+                this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+            }
         })
-
-        buttonJump = game.input.keyboard.addKey(Phaser.Keyboard.W)
-        buttonDown = game.input.keyboard.addKey(Phaser.Keyboard.S)
-        buttonLeft = game.input.keyboard.addKey(Phaser.Keyboard.A)
-        buttonRight = game.input.keyboard.addKey(Phaser.Keyboard.D)
-
         //Creates touch controls for mobile devices.(x, y, key, callback, callbackContext, overFrame, outFrame, downFrame, upFrame)
-        buttonJumpMobile = game.add.button(600, 500, 'test-button', null, this, 0, 1, 0, 1)
-        buttonLeftMobile = game.add.button(16, 350, 'test-button', null, this, 0, 1, 0, 1)
-        buttonRightMobile = game.add.button(96, 350, 'test-button', null, this, 0, 1, 0, 1)
+        // if (!game.device.desktop) {
+        buttonJumpMobile = game.add.button(window.innerWidth - 10, window.innerHeight - 64, 'test-button', null, this, 0, 1, 0, 1)
+        buttonLeftMobile = game.add.button(window.innerWidth / 2, window.innerHeight - 64, 'test-button', null, this, 0, 1, 0, 1)
+        buttonRightMobile = game.add.button(window.innerWidth - 50, window.innerHeight - 64, 'test-button', null, this, 0, 1, 0, 1)
 
-        //Sets the onInputDown properties to false when created. Seems to be set to true by default for some reason. Set to true so player doesn't move automatically.
+        //Sets the onInputDown properties to false when created. Seems to be set to true by default for some reason. Set to false so player doesn't move automatically.
         buttonLeftMobile.onInputDown = false
         buttonRightMobile.onInputDown = false
 
@@ -135,16 +135,52 @@ Game.prototype = {
         buttonJumpMobile.fixedToCamera = true
         buttonLeftMobile.fixedToCamera = true
         buttonRightMobile.fixedToCamera = true
+        this.setMobileControls()
+        // }
     },
-    setControls() {
+    setKeyboardControls() {
+        cursors = game.input.keyboard.createCursorKeys();
+        // buttonJump = game.input.keyboard.addKey(Phaser.Keyboard.W)
+        // buttonDown = game.input.keyboard.addKey(Phaser.Keyboard.S)
+        // buttonLeft = game.input.keyboard.addKey(Phaser.Keyboard.A)
+        // buttonRight = game.input.keyboard.addKey(Phaser.Keyboard.D)
+
+        cursors.left.onInputDown.add(function () { this.moveLeft = true })
+        cursors.left.onInputUp.add(function () { this.moveLeft = false })
+        cursors.right.onInputDown.add(function () { this.moveRight = true })
+        cursors.right.onInputUp.add(function () { this.moveRight = false })
+    },
+    setMobileControls() {
         buttonLeftMobile.events.onInputDown.add(function () { buttonLeftMobile.onInputDown = true })
         buttonLeftMobile.events.onInputUp.add(function () { buttonLeftMobile.onInputDown = false })
         buttonRightMobile.events.onInputDown.add(function () { buttonRightMobile.onInputDown = true })
         buttonRightMobile.events.onInputUp.add(function () { buttonRightMobile.onInputDown = false })
 
     },
-    gofull() {
-        // game.scale.startFullScreen();
-        // game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+    goFull() {
+        if (this.game.scale.startFullScreen) {
+            this.game.scale.stopFullScreen
+        } else {
+
+            game.scale.startFullScreen();
+            game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+        }
     }
 }
+
+// if (this.game.device.desktop) {
+//     this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+//     this.scale.minWidth = gameWidth / 2;
+//     this.scale.minHeight = gameHeight / 2;
+//     this.scale.maxWidth = gameWidth;
+//     this.scale.maxHeight = gameHeight;
+//     this.scale.pageAlignHorizontally = true;
+//     this.scale.pageAlignVertically = true;
+//     this.scale.setScreenSize(true);
+// }
+// else {
+//     this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+//     this.scale.minWidth = gameWidth / 2;
+//     this.scale.minHeight = gameHeight / 2;
+//     this.scale.maxWidth = 2048; //You can change this to gameWidth*2.5 if needed            this.scale.maxHeight = 1228; //Make sure these values are proportional to the gameWidth and gameHeight            this.scale.pageAlignHorizontally = true;            this.scale.pageAlignVertically = true;            this.scale.forceOrientation(true, false);            this.scale.hasResized.add(this.gameResized, this);            this.scale.enterIncorrectOrientation.add(this.enterIncorrectOrientation, this);            this.scale.leaveIncorrectOrientation.add(this.leaveIncorrectOrientation, this);            this.scale.setScreenSize(true);       
+// }
