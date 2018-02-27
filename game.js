@@ -13,14 +13,6 @@ Game.prototype = {
 
     },
     create: function () {
-        // this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-        // this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        // this.game.scale.refresh();
-        // if (!game.device.desktop) {
-        // }
-        // game.add.text(200, 200, window.devicePixelRatio, { font: '50px Ariel', fill: '#fff' })
-        console.log(`window.devicePixelRatio ${window.devicePixelRatio}`)
-        console.log(`scaleRatio ${this.scaleRatio}`)
         //Sets the size of the world to play in (topleft-most corner x, topleft-most corner y, width, height)
         game.world.setBounds(0, 0, 800, 600)
 
@@ -32,9 +24,9 @@ Game.prototype = {
         // sky.scale.set(configuration.scale_ratio);
         // star.scale.set(configuration.scale_ratio);
         // diamond.scale.set(configuration.scale_ratio);
-        // sky.scale.setTo(this.scaleRatio, this.scaleRatio)
-        // star.scale.setTo(this.scaleRatio, this.scaleRatio)
-        // diamond.scale.setTo(this.scaleRatio, this.scaleRatio)
+        sky.scale.setTo(this.scaleRatio, this.scaleRatio)
+        star.scale.setTo(this.scaleRatio, this.scaleRatio)
+        diamond.scale.setTo(this.scaleRatio, this.scaleRatio)
 
         //Creating text. (x, y, text, style)
         // game.add.text(200, 200, 'HEY THERE BUDDY', { fontSize: '32px', fill: '#fff' })
@@ -64,7 +56,6 @@ Game.prototype = {
         //Creating the player sprite (x spawn point, y spawn point, key)
         player = game.add.sprite(32, game.world.height - 150, "dude");
         // player.scale.set(configuration.scale_ratio);
-        // player.scale.setTo(3, 3)
         player.scale.setTo(this.scaleRatio, this.scaleRatio)
 
         game.physics.arcade.enable(player);
