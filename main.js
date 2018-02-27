@@ -1,8 +1,10 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game-area');
+var game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio, Phaser.CANVAS, 'game-area');
 
 // var baseUrl = window.location.host.includes('localhost') ? '//localhost:3000/api/' : '//'
+game.state.add('Boot', Boot)
 game.state.add('Preload', Preload)
+game.state.add('StartScreen', StartScreen)
 game.state.add('Game', Game)
 // game.state.add('Update', Update)
 
-game.state.start('Preload', true, true)
+game.state.start('Boot', true, true)

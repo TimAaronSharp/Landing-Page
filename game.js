@@ -2,7 +2,7 @@
 var Game = function () {
     this.platforms
     this.cursors
-    // this.hitPlatform
+    this.scaleRatio = window.devicePixelRatio / 3
 
 }
 
@@ -11,19 +11,28 @@ Game.prototype = {
 
     },
     create: function () {
+        this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+        this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        this.game.scale.refresh();
         if (!game.device.desktop) {
-            this.gofull()
+            game.scale.startFullScreen();
+            game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
             // game.input.onDown.add(gofull, this)
         }
-        game.physics.startSystem(Phaser.Physics.ARCADE);
-
         //Sets the size of the world to play in (topleft-most corner x, topleft-most corner y, width, height)
-        game.world.setBounds(0, 0, 3000, 600)
+        game.world.setBounds(0, 0, 800, 600)
 
         //Creating sprites. (x, y, key)
-        game.add.sprite(0, 0, "sky")
-        game.add.sprite(200, 500, "star")
-        game.add.sprite(700, 100, "diamond")
+        var sky = game.add.sprite(0, 0, "sky")
+        var star = game.add.sprite(200, 500, "star")
+        var diamond = game.add.sprite(700, 100, "diamond")
+
+        // sky.scale.set(configuration.scale_ratio);
+        // star.scale.set(configuration.scale_ratio);
+        // diamond.scale.set(configuration.scale_ratio);
+        // sky.scale.setTo(this.scaleRatio, this.scaleRatio)
+        // star.scale.setTo(this.scaleRatio, this.scaleRatio)
+        // diamond.scale.setTo(this.scaleRatio, this.scaleRatio)
 
         //Creating text. (x, y, text, style)
         // game.add.text(200, 200, 'HEY THERE BUDDY', { fontSize: '32px', fill: '#fff' })
@@ -36,7 +45,7 @@ Game.prototype = {
         //Creating an instance of the platforms group to be used as the ground of the world (x, y, key)
         var ground = this.platforms.create(0, game.world.height - 64, 'ground');
         //Sets the scale of the ground as a percentage (width, height)
-        ground.scale.setTo(6, 2);
+        ground.scale.setTo(2, 2);
         //Sets the body of the ground to be immovable, so that it won't move when the player collides with it.
         ground.body.immovable = true;
 
@@ -52,6 +61,10 @@ Game.prototype = {
         // player = game.add.group();
         //Creating the player sprite (x spawn point, y spawn point, key)
         player = game.add.sprite(32, game.world.height - 150, "dude");
+        // player.scale.set(configuration.scale_ratio);
+        // player.scale.setTo(3, 3)
+        // player.scale.setTo(this.scaleRatio, this.scaleRatio)
+
         game.physics.arcade.enable(player);
         // player.body.bounce.y = 0.2;
         //Setting the value of the gravity that will affect the player when he jumps/falls off a ledge, etc.
@@ -98,6 +111,11 @@ Game.prototype = {
     buttonCreator() {
         //Creates keyboard game controls. game.input.keyboard.createCursorKeys() is a method that sets the arrow keys for movement.
         cursors = game.input.keyboard.createCursorKeys();
+        buttonFullScreen = game.add.button(0, 0, 'test-button', null, this, 0, 1, 0, 1)
+        buttonFullScreen.events.onInputDown.add(function () {
+            game.scale.startFullScreen();
+            game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+        })
 
         buttonJump = game.input.keyboard.addKey(Phaser.Keyboard.W)
         buttonDown = game.input.keyboard.addKey(Phaser.Keyboard.S)
@@ -126,7 +144,7 @@ Game.prototype = {
 
     },
     gofull() {
-        game.scale.startFullScreen(true);
-        game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
+        // game.scale.startFullScreen();
+        // game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
     }
 }
