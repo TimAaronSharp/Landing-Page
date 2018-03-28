@@ -7,6 +7,7 @@ Preload.prototype = {
     },
     //function to preload game assets
     preload: function () {
+        game.scale.pageAlignHorizontally = true; game.scale.pageAlignVertically = true; game.scale.refresh();
         game.add.text(0, 0, 'Loading...')
 
         //first argument is the "key", used to refer to when creating in the "Create state. Second argument is the path to the asset to preload.
@@ -23,6 +24,6 @@ Preload.prototype = {
     create: function () {
         //starting the "Create" state after assets are preloaded. (key, clear world, clear cache, data to pass down to "Create" state)
         game.state.start('StartScreen', true, false)
-        
+
     }
 }
