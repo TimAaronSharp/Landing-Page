@@ -2,8 +2,8 @@
 var GameState = function () {
     this.platforms
     this.cursors
-    this.moveLeft = false
-    this.moveRight = false
+    // this.moveLeftToggle = false
+    // this.moveRightToggle = false
     this.scaleRatio = window.devicePixelRatio / 3
 
 }
@@ -13,29 +13,33 @@ GameState.prototype = {
 
     },
     create: function () {
-        console.log(game)
+        // console.log(`scaleRatio ${this.scaleRatio}`)
+        // console.log(game)
+
         game.scale.pageAlignHorizontally = true; game.scale.pageAlignVertically = true; game.scale.refresh();
         //Sets the size of the world to play in (topleft-most corner x, topleft-most corner y, width, height)
-        game.world.setBounds(0, 0, 800, 600)
+        game.world.setBounds(0, 0, 3000, 600)
+        this.setKeyboardControls()
 
         //Creating sprites. (x, y, key)
         var sky = game.add.sprite(0, 0, "sky")
         var star = game.add.sprite(200, 500, "star")
         var diamond = game.add.sprite(700, 100, "diamond")
-        // sky.anchor.setTo(0.5, 0.5)
-        star.anchor.setTo(0.5, 0.5)
-        diamond.anchor.setTo(0.5, 0.5)
+        // sky.anchor.setTo(this.scaleRatio,this.scaleRatio)
+        // star.anchor.setTo(this.scaleRatio,this.scaleRatio)
+        // diamond.anchor.setTo(this.scaleRatio,this.scaleRatio)
 
         // sky.scale.setTo(2, 2)
 
         sky.scale.setTo(this.scaleRatio, this.scaleRatio)
         star.scale.setTo(this.scaleRatio, this.scaleRatio)
         diamond.scale.setTo(this.scaleRatio, this.scaleRatio)
+
         // console.log(sky)
-        console.log(star)
-        console.log(diamond)
-        console.log(game.world.height)
-        console.log(game.world.width)
+        // console.log(star)
+        // console.log(diamond)
+        // console.log(game.world.height)
+        // console.log(game.world.width)
 
         //Creates a group called platforms. We can create/affect the entire group instead of just one instance at a time, such as enabling physics to all of them at once.
         this.platforms = game.add.group()
@@ -44,25 +48,31 @@ GameState.prototype = {
 
 
         //Creating an instance of the platforms group to be used as the ground of the world (x, y, key)
-        var ground = this.platforms.create(0, game.world.height - 64, 'ground');
+        var ground = this.platforms.create(0, game.world.height - 32, 'ground');
 
         //Sets the scale of the ground as a percentage (width, height)
+        ground.scale.set(this.scaleRatio, this.scaleRatio)
+
+        // game.add.text(ground.x, ground.y, 'GROUND', { font: '50px Ariel', fill: '#fff' })
+
         //Sets the body of the ground to be immovable, so that it won't move when the player collides with it.
         ground.body.immovable = true;
 
         //Creating instances of the platforms group to be used as ledges to jump on.
         var ledge = this.platforms.create(game.world.width - 400, game.world.height - 200, 'ground');
+        ledge.scale.set(this.scaleRatio, this.scaleRatio)
         ledge.body.immovable = true;
 
         ledge = this.platforms.create(game.world.width - (game.world.width + 150), game.world.height - 450, 'ground');
+        ledge.scale.set(this.scaleRatio, this.scaleRatio)
         ledge.body.immovable = true;
 
         this.platforms.children.forEach(function (platform) {
-            // platform.anchor.setTo(0.5, 0.5)
-            console.log(platform)
+            // platform.scale.set(this.scaleRatio, this.scaleRatio)
+            // platform.anchor.setTo(this.scaleRatio, this.scaleRatio)
+            // console.log(platform)
         })
 
-        this.platforms.scale.set(this.scaleRatio, this.scaleRatio)
 
         //Creating the player sprite (x spawn point, y spawn point, key)
         player = game.add.sprite(32, game.world.height - 150, "dude");
@@ -70,7 +80,7 @@ GameState.prototype = {
         player.scale.setTo(this.scaleRatio, this.scaleRatio)
 
         game.physics.arcade.enable(player);
-        player.anchor.setTo(0.5, 0.5)
+        // player.anchor.setTo(this.scaleRatio, this.scaleRatio)
 
         //Setting the value of the gravity that will affect the player when he jumps/falls off a ledge, etc.
         player.body.gravity.y = 1200;
@@ -83,10 +93,11 @@ GameState.prototype = {
         player.animations.add('right', [5, 6, 7, 8], 10, true);
 
         player.inputEnabled = true
-        console.log(window.devicePixelRatio)
-        console.log(player)
+        // console.log(`devicePixelRatio ${window.devicePixelRatio}`)
+        // console.log(player)
         this.buttonCreator();
         // this.setControls();
+        // console.log(Phaser.Keyboard)
     },
     update: function () {
         //Sets the camera to follow the player
@@ -97,22 +108,38 @@ GameState.prototype = {
 
         //Sets the players initial x velocity. If this isn't set then the player will not stop after you let go of the movement keys.
         player.body.velocity.x = 0;
-
-        if (buttonLeftMobile.onInputDown) {
-            player.body.velocity.x = -300;
-            player.animations.play('left');
+        if (!game.device.desktop) {
+            if (buttonLeftMobile.onInputDown) {
+                player.body.velocity.x = -300;
+                player.animations.play('left');
+            }
+            else if (buttonRightMobile.onInputDown) {
+                player.body.velocity.x = 300;
+                player.animations.play('right');
+            }
+            else {
+                player.animations.stop();
+                player.frame = 4;
+            }
+            buttonJumpMobile.events.onInputDown.add(function () { if (player.body.touching.down && hitPlatform) { player.body.velocity.y = -400; } })
+        } else {
+            if (buttonLeft.isDown) {
+                player.body.velocity.x = -300;
+                player.animations.play('left');
+            } else if (buttonRight.isDown) {
+                player.body.velocity.x = 300;
+                player.animations.play('right');
+            }
+            else {
+                player.animations.stop();
+                player.frame = 4;
+            }
+            if (buttonJump.isDown && player.body.touching.down && hitPlatform) { player.body.velocity.y = -400; }
         }
-        else if (buttonRightMobile.onInputDown) {
-            player.body.velocity.x = 300;
-            player.animations.play('right');
-        }
-        else {
-            player.animations.stop();
-            player.frame = 4;
-        }
+        //MAKE CONTROLS FOR DESKTOP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         //  Allow the player to jump if they are touching the ground.
-        buttonJumpMobile.events.onInputDown.add(function () { if (player.body.touching.down && hitPlatform) { player.body.velocity.y = -400; } })
+        // console.log(this.moveLeftToggle)
     },
     buttonCreator() {
         //Creates keyboard game controls. game.input.keyboard.createCursorKeys() is a method that sets the arrow keys for movement.
@@ -126,39 +153,34 @@ GameState.prototype = {
             }
         })
         //Creates touch controls for mobile devices.(x, y, key, callback, callbackContext, overFrame, outFrame, downFrame, upFrame)
-        // if (!game.device.desktop) {
-        buttonJumpMobile = game.add.button(game.world.width - 10, game.world.height - 64, 'test-button', null, this, 0, 1, 0, 1)
-        buttonLeftMobile = game.add.button(game.world.width - game.world.width, game.world.height - 64, 'test-button', null, this, 0, 1, 0, 1)
-        buttonRightMobile = game.add.button(game.world.width - 50, game.world.height - 64, 'test-button', null, this, 0, 1, 0, 1)
-
-        //Sets the onInputDown properties to false when created. Seems to be set to true by default for some reason. Set to false so player doesn't move automatically.
-        buttonLeftMobile.onInputDown = false
-        buttonRightMobile.onInputDown = false
-
-        //Fixes the buttons to the screen
-        buttonJumpMobile.fixedToCamera = true
-        buttonLeftMobile.fixedToCamera = true
-        buttonRightMobile.fixedToCamera = true
-
-        //Scales buttons based on DPR (Device Pixel Ratio)
         buttonFullScreen.scale.setTo(this.scaleRatio, this.scaleRatio)
-        buttonJumpMobile.scale.setTo(this.scaleRatio, this.scaleRatio)
-        buttonLeftMobile.scale.setTo(this.scaleRatio, this.scaleRatio)
-        buttonRightMobile.scale.setTo(this.scaleRatio, this.scaleRatio)
-        this.setMobileControls()
+        if (!game.device.desktop) {
+            buttonJumpMobile = game.add.button(window.innerWidth - 90, window.innerHeight - 192, 'test-button', null, this, 0, 1, 0, 1)
+            buttonLeftMobile = game.add.button(window.innerWidth - window.innerWidth, window.innerHeight - 64, 'test-button', null, this, 0, 1, 0, 1)
+            buttonRightMobile = game.add.button(window.innerWidth - 90, window.innerHeight - 64, 'test-button', null, this, 0, 1, 0, 1)
+            //Sets the onInputDown properties to false when created. Seems to be set to true by default for some reason. Set to false so player doesn't move automatically.
+            buttonLeftMobile.onInputDown = false
+            buttonRightMobile.onInputDown = false
+
+            //Fixes the buttons to the screen
+            buttonJumpMobile.fixedToCamera = true
+            buttonLeftMobile.fixedToCamera = true
+            buttonRightMobile.fixedToCamera = true
+
+            //Scales buttons based on DPR (Device Pixel Ratio)
+            buttonJumpMobile.scale.setTo(this.scaleRatio, this.scaleRatio)
+            buttonLeftMobile.scale.setTo(this.scaleRatio, this.scaleRatio)
+            buttonRightMobile.scale.setTo(this.scaleRatio, this.scaleRatio)
+            this.setMobileControls()
+        }
         // }
     },
     setKeyboardControls() {
         cursors = game.input.keyboard.createCursorKeys();
-        // buttonJump = game.input.keyboard.addKey(Phaser.Keyboard.W)
+        buttonJump = game.input.keyboard.addKey(Phaser.Keyboard.W)
         // buttonDown = game.input.keyboard.addKey(Phaser.Keyboard.S)
-        // buttonLeft = game.input.keyboard.addKey(Phaser.Keyboard.A)
-        // buttonRight = game.input.keyboard.addKey(Phaser.Keyboard.D)
-
-        cursors.left.onInputDown.add(function () { this.moveLeft = true })
-        cursors.left.onInputUp.add(function () { this.moveLeft = false })
-        cursors.right.onInputDown.add(function () { this.moveRight = true })
-        cursors.right.onInputUp.add(function () { this.moveRight = false })
+        buttonLeft = game.input.keyboard.addKey(Phaser.Keyboard.A)
+        buttonRight = game.input.keyboard.addKey(Phaser.Keyboard.D)
     },
     setMobileControls() {
         buttonLeftMobile.events.onInputDown.add(function () { buttonLeftMobile.onInputDown = true })
@@ -167,6 +189,18 @@ GameState.prototype = {
         buttonRightMobile.events.onInputUp.add(function () { buttonRightMobile.onInputDown = false })
 
     },
+    // moveLeftTrue() {
+    //     moveLeftToggle = true
+    // },
+    // moveLeftFalse() {
+    //     moveLeftToggle = false
+    // },
+    // moveRightTrue() {
+    //     moveRightToggle = true
+    // },
+    // moveRightFalse() {
+    //     moveRightToggle = false
+    // },
     goFull() {
         if (this.game.scale.startFullScreen) {
             this.game.scale.stopFullScreen
