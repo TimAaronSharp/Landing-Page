@@ -17,7 +17,17 @@ Preload.prototype = {
         this.game.load.image('ground', './assets/platform.png');
         this.game.load.image('test-button', './assets/test-button.png')
 
+        this.game.load.image('Acid (2)-tiles', './assets/tiles/Acid (2).png')
+        this.game.load.image('acid1-tiles', './assets/tiles/Acid (1).png')
+        this.game.load.image('BGTile (1)-tiles', './assets/tiles/BGTile (1).png')
+        this.game.load.image('BGTile (3)-tiles', './assets/tiles/BGTile (3).png')
+        this.game.load.image('BGTile (4)-tiles', './assets/tiles/BGTile (4).png')
+        this.game.load.image('Tile (1)-tiles', './assets/tiles/Tile (1).png')
+        this.game.load.image('Tile (7)-tiles', './assets/tiles/Tile (7).png')
+        this.game.load.image('Tile (8)-tiles', './assets/tiles/Tile (8).png')
+
         this.game.load.spritesheet('dude', './assets/dude.png', 96, 144)
+        this.game.load.tilemap('map', './assets/tilemaps/map.json', null, Phaser.Tilemap.TILED_JSON)
 
     },
     //create function used here only to prevent "Create" state from starting before all assets are preloaded. If it is in the preload function it sometimes starts before assets are loaded.
