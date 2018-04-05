@@ -46,7 +46,7 @@ GameState.prototype = {
         // game.physics.arcade.enable(this.platforms);
 
         //Creating the player sprite (x spawn point, y spawn point, key)
-        player = game.add.sprite(32, game.world.height - game.world.height, "dude");
+        player = game.add.sprite(200, 300, "dude");
         player.scale.setTo(this.scaleRatio, this.scaleRatio)
         game.physics.arcade.enable(player);
         //Sets the camera to follow the player
@@ -71,9 +71,13 @@ GameState.prototype = {
         // this.setControls();
         console.log(this.map)
         this.midLayer.debug = true
+
+        //The player is not colliding with the terrain after spawning unless you jump before hitting the ground for some reason. Telling the player to jump as he is falling fixes this. Will invesigate a better way to fix this later.
+        buttonJump.isDown = true
+        buttonJump.isDown = false
     },
     update: function () {
-        game.physics.arcade.collide(player, this.midLayer);
+        var hitPlatform = game.physics.arcade.collide(player, this.midLayer);
 
         //Sets the players initial x velocity. If this isn't set then the player will not stop after you let go of the movement keys.
         player.body.velocity.x = 0;
@@ -104,7 +108,7 @@ GameState.prototype = {
                 player.frame = 4;
             }
             //  Allow the player to jump if they are touching the ground.
-            if (buttonJump.isDown && player.body.touching.down) { player.body.velocity.y = -400; }
+            if (buttonJump.isDown && hitPlatform) { player.body.velocity.y = -400; }
         }
     },
     buttonCreator() {
