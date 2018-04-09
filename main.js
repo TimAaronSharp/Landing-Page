@@ -3,9 +3,9 @@ var resolutionHeight = window.innerHeight * window.devicePixelRatio
 
 var game = new Phaser.Game(resolutionWidth, resolutionHeight, Phaser.CANVAS, 'game-area');
 
-console.log(`window.innerWidth ${window.innerWidth}`)
-console.log(`window.innerHeight ${window.innerHeight}`)
-console.log(`${resolutionWidth} x ${resolutionHeight}`)
+// console.log(`window.innerWidth ${window.innerWidth}`)
+// console.log(`window.innerHeight ${window.innerHeight}`)
+// console.log(`${resolutionWidth} x ${resolutionHeight}`)
 
 // var baseUrl = window.location.host.includes('localhost') ? '//localhost:3000/api/' : '//'
 game.state.add('Boot', Boot)

@@ -6,7 +6,9 @@ var GameState = function () {
     this.topLayer
     this.platforms
     this.cursors
+    this.gameClock = 0
     this.scaleRatio = window.devicePixelRatio / 3
+
 }
 
 GameState.prototype = {
@@ -15,11 +17,15 @@ GameState.prototype = {
     },
     create: function () {
         // console.log(`scaleRatio ${this.scaleRatio}`)
-        // console.log(game)
+        console.log(game)
+
+        
 
         game.scale.pageAlignHorizontally = true; game.scale.pageAlignVertically = true; game.scale.refresh();
 
         this.map = game.add.tilemap('map')
+        // console.log(this.game)
+        console.log(this.map)
         this.map.addTilesetImage('Acid (2)', 'Acid (2)-tiles')
         this.map.addTilesetImage('acid1', 'acid1-tiles')
         this.map.addTilesetImage('BGTile (1)', 'BGTile (1)-tiles')
@@ -29,30 +35,41 @@ GameState.prototype = {
         this.map.addTilesetImage('Tile (7)', 'Tile (7)-tiles')
         this.map.addTilesetImage('Tile (8)', 'Tile (8)-tiles')
 
-        
+        for (var i = 0; i < this.map.tilesets.length; i++) {
+
+            // this.map.tilesets[i].image.scale.setTo(this.scaleRatio, this.scaleRatio)
+            // this.map.tilesets[i].image.height *= this.scaleRatio
+            // this.map.tilesets[i].image.width *= this.scaleRatio
+            // this.map.tilesets[i].tileHeight = this.map.tilesets[i].image.height
+            // this.map.tilesets[i].tileWidth = this.map.tilesets[i].image.width
+            // this.map.tileHeight = this.map.tilesets[i].image.height
+            // this.map.tileWidth = this.map.tilesets[i].image.width
+        }
+
+        //COME BACK TO SCALING THE TILEMAP/TILES/LAYERS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //LOOK AT TILESET/IMAGE HEIGHT/NATURALHEIGHT!!! WILL PROBABLY NEED TO SOMEHOW SCALE THE IMAGE HEIGHT AS WELL AS THE TILE HEIGHT AND TILEMAP
+
+        // this.map.tileHeight *= this.scaleRatio
+        // this.map.tileWidth *= this.scaleRatio
+
+        // this.map.tilesets.forEach(tileset => {
+        //     tileset.tileHeight = tileset.tileHeight * this.scaleRatio
+        //     tileset.tileWidth = tileset.tileWidth * this.scaleRatio
+
+        // });
         this.bottomLayer = this.map.createLayer('Tile Layer 1')
         this.midLayer = this.map.createLayer('Tile Layer 2')
-        
-        this.map.setCollisionBetween(21, 25, true, this.midLayer)
 
-        //Sets the size of the world to the size of this layer (this.bottomLayer is the background layer in the tilemap, so resizing to this layer makes the world as big as we need)
-        this.bottomLayer.resizeWorld()
-      
-        this.setKeyboardControls()
-
-        //Creates a group called platforms. We can create/affect the entire group instead of just one instance at a time, such as enabling physics to all of them at once.
-        // this.platforms = game.add.group()
-        // this.platforms.enableBody = true;
-        // game.physics.arcade.enable(this.platforms);
+        // this.bottomLayer.scale.setTo(this.scaleRatio, this.scaleRatio)
+        // this.midLayer.scale.setTo(this.scaleRatio, this.scaleRatio)
 
         //Creating the player sprite (x spawn point, y spawn point, key)
         player = game.add.sprite(200, 300, "dude");
         player.scale.setTo(this.scaleRatio, this.scaleRatio)
         game.physics.arcade.enable(player);
+
         //Sets the camera to follow the player
         game.camera.follow(player)
-
-        // player.anchor.setTo(this.scaleRatio, this.scaleRatio)
 
         //Setting the value of the gravity that will affect the player when he jumps/falls off a ledge, etc.
         player.body.gravity.y = 1200;
@@ -65,18 +82,47 @@ GameState.prototype = {
         player.animations.add('right', [5, 6, 7, 8], 10, true);
 
         player.inputEnabled = true
+
+        this.map.setCollisionBetween(21, 25, true, this.midLayer)
+
+        //Sets the size of the world to the size of this layer (this.bottomLayer is the background layer in the tilemap, so resizing to this layer makes the world as big as we need)
+        this.bottomLayer.resizeWorld()
+        this.setKeyboardControls()
+
+
+        //Creates a group called platforms. We can create/affect the entire group instead of just one instance at a time, such as enabling physics to all of them at once.
+        // this.platforms = game.add.group()
+        // this.platforms.enableBody = true;
+        // game.physics.arcade.enable(this.platforms);
+
+
+
+        // player.anchor.setTo(this.scaleRatio, this.scaleRatio)
+
+
         // console.log(`devicePixelRatio = ${window.devicePixelRatio}`)
-        console.log(player)
+        // console.log(player)
         this.buttonCreator();
         // this.setControls();
-        console.log(this.map)
-        this.midLayer.debug = true
+        // console.log(this.map)
+        // this.midLayer.debug = true
 
         //The player is not colliding with the terrain after spawning unless you jump before hitting the ground for some reason. Telling the player to jump as he is falling fixes this. Will invesigate a better way to fix this later.
-        buttonJump.isDown = true
-        buttonJump.isDown = false
+
     },
     update: function () {
+        this.gameClock++
+
+        if (this.gameClock < 60) {
+            player.body.gravity.y = 0
+        } else {
+            player.body.gravity.y = 1200
+        }
+        // if(this.gameClock === 1){
+        // buttonJump.isDown = true
+        // }else if(this.gameClock === 2){
+        //     buttonJump.isDown = false
+        // }
         var hitPlatform = game.physics.arcade.collide(player, this.midLayer);
 
         //Sets the players initial x velocity. If this isn't set then the player will not stop after you let go of the movement keys.
@@ -108,7 +154,7 @@ GameState.prototype = {
                 player.frame = 4;
             }
             //  Allow the player to jump if they are touching the ground.
-            if (buttonJump.isDown && hitPlatform) { player.body.velocity.y = -400; }
+            if (buttonJump.isDown) { player.body.velocity.y = -400; }
         }
     },
     buttonCreator() {
