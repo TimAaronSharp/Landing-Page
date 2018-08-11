@@ -1,9 +1,9 @@
 
 var GameState = function () {
     this.map
-    this.bottomLayer
-    this.midLayer
-    this.topLayer
+    // this.bottomLayer
+    // this.midLayer
+    // this.topLayer
     this.platforms
     this.cursors
     this.gameClock = 0
@@ -16,60 +16,39 @@ GameState.prototype = {
 
     },
     create: function () {
-        // console.log(`scaleRatio ${this.scaleRatio}`)
+        console.log(`DPR ${window.devicePixelRatio}`)
+        console.log(`scaleRatio ${this.scaleRatio}`)
         console.log(game)
-
+        // game.scale.scaleMode = Phaser.ScaleManager.RESIZE;            
+        // game.scale.pageAlignHorizontally = true;            
+        // game.scale.pageAlignVertically = true; 
         
-
         game.scale.pageAlignHorizontally = true; game.scale.pageAlignVertically = true; game.scale.refresh();
+        game.world.height = 2000
+        game.world.width = 10000
 
-        this.map = game.add.tilemap('map')
-        // console.log(this.game)
-        console.log(this.map)
-        this.map.addTilesetImage('Acid (2)', 'Acid (2)-tiles')
-        this.map.addTilesetImage('acid1', 'acid1-tiles')
-        this.map.addTilesetImage('BGTile (1)', 'BGTile (1)-tiles')
-        this.map.addTilesetImage('BGTile (3)', 'BGTile (3)-tiles')
-        this.map.addTilesetImage('BGTile (4)', 'BGTile (4)-tiles')
-        this.map.addTilesetImage('Tile (1)', 'Tile (1)-tiles')
-        this.map.addTilesetImage('Tile (7)', 'Tile (7)-tiles')
-        this.map.addTilesetImage('Tile (8)', 'Tile (8)-tiles')
+        // this.startGameFullScreen()
 
-        for (var i = 0; i < this.map.tilesets.length; i++) {
-
-            // this.map.tilesets[i].image.scale.setTo(this.scaleRatio, this.scaleRatio)
-            // this.map.tilesets[i].image.height *= this.scaleRatio
-            // this.map.tilesets[i].image.width *= this.scaleRatio
-            // this.map.tilesets[i].tileHeight = this.map.tilesets[i].image.height
-            // this.map.tilesets[i].tileWidth = this.map.tilesets[i].image.width
-            // this.map.tileHeight = this.map.tilesets[i].image.height
-            // this.map.tileWidth = this.map.tilesets[i].image.width
-        }
-
-        //COME BACK TO SCALING THE TILEMAP/TILES/LAYERS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //LOOK AT TILESET/IMAGE HEIGHT/NATURALHEIGHT!!! WILL PROBABLY NEED TO SOMEHOW SCALE THE IMAGE HEIGHT AS WELL AS THE TILE HEIGHT AND TILEMAP
-
-        // this.map.tileHeight *= this.scaleRatio
-        // this.map.tileWidth *= this.scaleRatio
-
-        // this.map.tilesets.forEach(tileset => {
-        //     tileset.tileHeight = tileset.tileHeight * this.scaleRatio
-        //     tileset.tileWidth = tileset.tileWidth * this.scaleRatio
-
-        // });
-        this.bottomLayer = this.map.createLayer('Tile Layer 1')
-        this.midLayer = this.map.createLayer('Tile Layer 2')
-
-        // this.bottomLayer.scale.setTo(this.scaleRatio, this.scaleRatio)
-        // this.midLayer.scale.setTo(this.scaleRatio, this.scaleRatio)
+        this.game.add.sprite(0, 0, 'sky')
 
         //Creating the player sprite (x spawn point, y spawn point, key)
         player = game.add.sprite(200, 300, "dude");
         player.scale.setTo(this.scaleRatio, this.scaleRatio)
         game.physics.arcade.enable(player);
 
+        this.platforms = game.add.group();
+        this.platforms.enableBody = true;
+        
+
+        console.log("platforms " + this.platforms)
+
+        var ground = this.platforms.create(0, game.world.height - 64, 'ground')
+        ground.body.immovable = true
+        var ground = this.platforms.create(200, game.world.height - 500, 'ground')
+        ground.body.immovable = true
         //Sets the camera to follow the player
         game.camera.follow(player)
+        
 
         //Setting the value of the gravity that will affect the player when he jumps/falls off a ledge, etc.
         player.body.gravity.y = 1200;
@@ -83,10 +62,11 @@ GameState.prototype = {
 
         player.inputEnabled = true
 
-        this.map.setCollisionBetween(21, 25, true, this.midLayer)
+        // this.map.setCollisionBetween(21, 25, true, this.platforms)
+        // this.map.setCollisionBetween(21, 25, true, this.midLayer)
 
         //Sets the size of the world to the size of this layer (this.bottomLayer is the background layer in the tilemap, so resizing to this layer makes the world as big as we need)
-        this.bottomLayer.resizeWorld()
+        // this.bottomLayer.resizeWorld()
         this.setKeyboardControls()
 
 
@@ -95,10 +75,7 @@ GameState.prototype = {
         // this.platforms.enableBody = true;
         // game.physics.arcade.enable(this.platforms);
 
-
-
         // player.anchor.setTo(this.scaleRatio, this.scaleRatio)
-
 
         // console.log(`devicePixelRatio = ${window.devicePixelRatio}`)
         // console.log(player)
@@ -113,6 +90,7 @@ GameState.prototype = {
     update: function () {
         this.gameClock++
 
+
         if (this.gameClock < 60) {
             player.body.gravity.y = 0
         } else {
@@ -123,7 +101,7 @@ GameState.prototype = {
         // }else if(this.gameClock === 2){
         //     buttonJump.isDown = false
         // }
-        var hitPlatform = game.physics.arcade.collide(player, this.midLayer);
+        var hitPlatform = game.physics.arcade.collide(player, this.platforms);
 
         //Sets the players initial x velocity. If this isn't set then the player will not stop after you let go of the movement keys.
         player.body.velocity.x = 0;
@@ -207,16 +185,25 @@ GameState.prototype = {
         buttonRightMobile.events.onInputUp.add(function () { buttonRightMobile.onInputDown = false })
 
     },
-    goFull() {
-        if (this.game.scale.startFullScreen) {
-            this.game.scale.stopFullScreen
+    // goFull() {
+    //     if (this.game.scale.startFullScreen) {
+    //         this.game.scale.stopFullScreen
+    //     } else {
+    //         game.scale.startFullScreen();
+    //         game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+    //     }
+    // },
+    startGameFullScreen() {
+        if (game.scale.isFullScreen) {
+            game.scale.stopFullScreen()
         } else {
-
             game.scale.startFullScreen();
             game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
         }
     }
 }
+
+
 
 // if (this.game.device.desktop) {
 //     this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -288,3 +275,43 @@ GameState.prototype = {
 
         //sets hitPlatform variable to a collision check between the player and the platforms group. Can use the variable from here on out instead of typing the whole collision check.
         // var hitPlatform = game.physics.arcade.collide(player, this.platforms);
+
+        // this.map = game.add.tilemap('map')
+        // console.log(this.game)
+        // console.log(this.map)
+        // this.map.addTilesetImage('Acid (2)', 'Acid (2)-tiles')
+        // this.map.addTilesetImage('acid1', 'acid1-tiles')
+        // this.map.addTilesetImage('BGTile (1)', 'BGTile (1)-tiles')
+        // this.map.addTilesetImage('BGTile (3)', 'BGTile (3)-tiles')
+        // this.map.addTilesetImage('BGTile (4)', 'BGTile (4)-tiles')
+        // this.map.addTilesetImage('Tile (1)', 'Tile (1)-tiles')
+        // this.map.addTilesetImage('Tile (7)', 'Tile (7)-tiles')
+        // this.map.addTilesetImage('Tile (8)', 'Tile (8)-tiles')
+
+        // for (var i = 0; i < this.map.tilesets.length; i++) {
+
+            // this.map.tilesets[i].image.scale.setTo(this.scaleRatio, this.scaleRatio)
+            // this.map.tilesets[i].image.height *= this.scaleRatio
+            // this.map.tilesets[i].image.width *= this.scaleRatio
+            // this.map.tilesets[i].tileHeight = this.map.tilesets[i].image.height
+            // this.map.tilesets[i].tileWidth = this.map.tilesets[i].image.width
+            // this.map.tileHeight = this.map.tilesets[i].image.height
+            // this.map.tileWidth = this.map.tilesets[i].image.width
+        // }
+
+        //COME BACK TO SCALING THE TILEMAP/TILES/LAYERS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //LOOK AT TILESET/IMAGE HEIGHT/NATURALHEIGHT!!! WILL PROBABLY NEED TO SOMEHOW SCALE THE IMAGE HEIGHT AS WELL AS THE TILE HEIGHT AND TILEMAP
+
+        // this.map.tileHeight *= this.scaleRatio
+        // this.map.tileWidth *= this.scaleRatio
+
+        // this.map.tilesets.forEach(tileset => {
+        //     tileset.tileHeight = tileset.tileHeight * this.scaleRatio
+        //     tileset.tileWidth = tileset.tileWidth * this.scaleRatio
+
+        // });
+        // this.bottomLayer = this.map.createLayer('Tile Layer 1')
+        // this.midLayer = this.map.createLayer('Tile Layer 2')
+
+        // this.bottomLayer.scale.setTo(this.scaleRatio, this.scaleRatio)
+        // this.midLayer.scale.setTo(this.scaleRatio, this.scaleRatio)

@@ -10,14 +10,10 @@ StartScreen.prototype = {
         if (game.device.desktop) {
             game.add.text(game.world.centerX, game.world.centerY, 'Click To Play!', { font: '50px Ariel', fill: '#fff' })
         } else {
-
             game.add.text(game.world.centerX, game.world.centerY, 'Touch To Play!', { font: '50px Ariel', fill: '#fff' })
         }
-
         game.input.onTap.add(this.startGameFullScreen, this)
-
-
-
+        
     },
     startGameFullScreen() {
         if (game.scale.isFullScreen) {
