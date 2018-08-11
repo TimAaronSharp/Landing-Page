@@ -24,8 +24,7 @@ GameState.prototype = {
         // game.scale.pageAlignVertically = true; 
         
         game.scale.pageAlignHorizontally = true; game.scale.pageAlignVertically = true; game.scale.refresh();
-        game.world.height = 2000
-        game.world.width = 10000
+        game.world.setBounds(0,0,10000,2000)
 
         // this.startGameFullScreen()
 
@@ -35,6 +34,7 @@ GameState.prototype = {
         player = game.add.sprite(200, 300, "dude");
         player.scale.setTo(this.scaleRatio, this.scaleRatio)
         game.physics.arcade.enable(player);
+        game.camera.follow(player)
 
         this.platforms = game.add.group();
         this.platforms.enableBody = true;
@@ -47,7 +47,6 @@ GameState.prototype = {
         var ground = this.platforms.create(200, game.world.height - 500, 'ground')
         ground.body.immovable = true
         //Sets the camera to follow the player
-        game.camera.follow(player)
         
 
         //Setting the value of the gravity that will affect the player when he jumps/falls off a ledge, etc.
